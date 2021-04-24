@@ -9,6 +9,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 
 namespace myapp_auth0
 {
@@ -24,6 +25,8 @@ namespace myapp_auth0
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var CLIENTSECRET = Environment.GetEnvironmentVariable("CLIENTSECRET");
+
             services.AddAuthentication(options => {
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -38,14 +41,15 @@ namespace myapp_auth0
 
                     // Configure the Auth0 Client ID and Client Secret
                     options.ClientId = Configuration["Auth0:ClientId"];
-                    options.ClientSecret = Configuration["Auth0:ClientSecret"];
+                    //options.ClientSecret = Configuration["Auth0:ClientSecret"];
+                    options.ClientSecret = CLIENTSECRET;
 
                     // Set response type to code
                     options.ResponseType = OpenIdConnectResponseType.Code;
 
                     // Configure the scope
                     options.Scope.Clear();
-                    options.Scope.Add("openid");
+                    options.Scope.Add("openid profile email");
 
                     // Set the callback path, so Auth0 will call back to http://localhost:3000/callback
                     // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard
@@ -56,6 +60,12 @@ namespace myapp_auth0
 
                     // Saves tokens to the AuthenticationProperties
                     options.SaveTokens = true;
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        NameClaimType = "name",
+                        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/roles"
+                    };
 
                     options.Events = new OpenIdConnectEvents
                     {

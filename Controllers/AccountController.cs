@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using System.Security.Claims;
+using myapp_auth0.ViewModels;
+using System.Linq;
 
 namespace myapp_auth0.Controllers
 {
@@ -20,12 +23,25 @@ namespace myapp_auth0.Controllers
         {
             await HttpContext.SignOutAsync("Auth0", new AuthenticationProperties
             {
-                // Indicate here where Auth0 should redirect the user after a logout.
-                // Note that the resulting absolute Uri must be whitelisted in the 
-                // **Allowed Logout URLs** settings for the client.
                 RedirectUri = Url.Action("Index", "Home")
             });
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        }
+
+        [Authorize]
+        public IActionResult UserProfile()
+        {
+            return View(new UserProfileViewModel()
+            {
+                Name = User.Claims.FirstOrDefault(c => c.Type == "nickname")?.Value,
+                EmailAddress = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
+                ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
+            });
+        }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
         public IActionResult Index()
         {

@@ -24,13 +24,31 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        <li class="nav-item">
+                            
+                        </li>
                         @if(User.Identity.IsAuthenticated)
                         {
-                            <li><a id="qsLogoutBtn" asp-controller="Account" asp-action="Logout">Logout</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="RulesListByApp">Rules List By App</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" id="qsLogoutBtn" asp-controller="Account" asp-action="Logout">Logout</a>
+                            </li>
                         }
                         else
                         {
-                            <li><a id="qsLoginBtn" asp-controller="Account" asp-action="Login">Login</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" id="qsLoginBtn" asp-controller="Account" asp-action="Login">Login</a>
+                            </li>
+                        }
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        @if(User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Logged in as: @User.Identity.Name</a>
+                            </li>
                         }
                     </ul>
                 </div>

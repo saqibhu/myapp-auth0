@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "Rules List By App";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>See below for rules list</p>
+
+<ul>
+@{
+    foreach (var Rules in ViewData["Rules"] as Dictionary<string, List<string>>)
+    {
+        <li>@Rules.Key</li>
+        foreach (var RulesItem in @Rules.Value)
+        {
+            <ul>
+                <li>@RulesItem</li>
+            </ul>
+        }
+    }
+}
+</ul>
+
