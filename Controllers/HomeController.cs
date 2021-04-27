@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using myapp_auth0.Models;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
-using Auth0.Core;
+using Microsoft.Extensions.Configuration;
 using Auth0.ManagementApi;
 using Auth0.ManagementApi.Models;
 using Auth0.ManagementApi.Paging;
@@ -23,10 +23,12 @@ namespace myapp_auth0.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            Configuration = configuration;
         }
+        public IConfiguration Configuration { get; }
 
         public IActionResult Index()
         {
@@ -73,7 +75,8 @@ namespace myapp_auth0.Controllers
 
         public async Task<IPagedList<Rule>> GetRules()
         {
-            var CLIENTMANAGEMENTSECRET = Environment.GetEnvironmentVariable("CLIENTMANAGEMENTSECRET");
+            //var CLIENTMANAGEMENTSECRET = Environment.GetEnvironmentVariable("CLIENTMANAGEMENTSECRET");
+            var CLIENTMANAGEMENTSECRET = Configuration["Auth0:ClientManagementSecret"];
 
             using (var client = new HttpClient())
             {

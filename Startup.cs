@@ -41,8 +41,8 @@ namespace myapp_auth0
 
                     // Configure the Auth0 Client ID and Client Secret
                     options.ClientId = Configuration["Auth0:ClientId"];
-                    //options.ClientSecret = Configuration["Auth0:ClientSecret"];
-                    options.ClientSecret = CLIENTSECRET;
+                    options.ClientSecret = Configuration["Auth0:ClientSecret"];
+                    //options.ClientSecret = CLIENTSECRET;
 
                     // Set response type to code
                     options.ResponseType = OpenIdConnectResponseType.Code;
@@ -90,6 +90,15 @@ namespace myapp_auth0
                             context.HandleResponse();
 
                             return Task.CompletedTask;
+                        },
+                        
+                        //Handle remote failures
+                        OnRemoteFailure = context => {
+                            var logoutUri = $"https://{Configuration["Auth0:Domain"]}/v2/logout?client_id={Configuration["Auth0:ClientId"]}";
+                            context.Response.Redirect(logoutUri);
+                            context.HandleResponse();
+
+                            return Task.FromResult(0);
                         }
                     };
                 }
